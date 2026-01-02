@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard | Blood & Marrow Portal</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 40px 20px;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: #0c4a6e;
+            margin: 0;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 0;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1e293b;
+        }
+
+        /* Form Styling */
+        form { display: flex; flex-direction: column; gap: 20px; }
+
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+
+        label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input, select {
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: #f8fafc;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+        }
+
+        /* HLA Grid */
+        .hla-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #bae6fd;
+        }
+
+        .hla-grid input {
+            padding: 10px;
+            font-size: 0.9rem;
+            text-align: center;
+            font-family: monospace;
+            background: white;
+        }
+
+        button[type="submit"] {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        button[type="submit"]:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Donor Contact Cards */
+        .donor-card {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .donor-card strong { color: #166534; display: block; margin-bottom: 8px; font-size: 1rem; }
+
+        .contact-info {
+            font-size: 0.85rem;
+            color: #15803d;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .contact-info a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .contact-info a:hover { text-decoration: underline; }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 850px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <header>
+            <h2>User Dashboard</h2>
+        </header>
+
+        <div class="main-layout">
+            
+            <main class="card">
+                {% if user_type == "blood" %}
+                <h3>🩸 Create Blood Request</h3>
+                
+                <form method="post">
+                    <div class="form-group">
+                        <label>Required Blood Group</label>
+                        <input name="blood_group" placeholder="e.g. O+, AB-" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hospital Name & Address</label>
+                        <input name="hospital" placeholder="City General Hospital" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label>Amount (Units)</label>
+                            <input name="amount" placeholder="e.g. 2" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Required By Date</label>
+                            <input type="date" name="req_date" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Urgency Level</label>
+                        <select name="urgency">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High Priority</option>
+                        </select>
+                    </div>
+
+                    <button type="submit">Broadcast Blood Request</button>
+                </form>
+
+                {% elif user_type == "marrow" %}
+                <h3>🧬 Bone Marrow Request</h3>
+                
+                <form method="post">
+                    <div class="form-group">
+                        <label>Patient HLA Values (6 Markers)</label>
+                        <div class="hla-grid">
+                            <input name="hla1" placeholder="Marker 1" required>
+                            <input name="hla2" placeholder="Marker 2" required>
+                            <input name="hla3" placeholder="Marker 3" required>
+                            <input name="hla4" placeholder="Marker 4" required>
+                            <input name="hla5" placeholder="Marker 5" required>
+                            <input name="hla6" placeholder="Marker 6" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hospital / Place</label>
+                        <input name="hospital" placeholder="Medical Center Oncology Dept." required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label>Required Amount</label>
+                            <input name="amount" placeholder="e.g. 1 Kit" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Required Date</label>
+                            <input type="date" name="req_date" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Urgency</label>
+                        <select name="urgency">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+
+                    <button type="submit">Submit Registry Search</button>
+                </form>
+                {% endif %}
+            </main>
+
+            <aside class="card">
+                <h3>🤝 Accepted Donors</h3>
+                {% if donors %}
+                    {% for d in donors %}
+                        <div class="donor-card">
+                            <strong>{{ d[0] }}</strong>
+                            <div class="contact-info">
+                                <a href="tel:{{ d[1] }}">📞 {{ d[1] }}</a>
+                                <a href="mailto:{{ d[2] }}">✉️ {{ d[2] }}</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <p>Our system is currently searching for eligible donors. You will be notified here once a match accepts your request.</p>
+                    </div>
+                {% endif %}
+            </aside>
+
+        </div>
+    </div>
+
+</body>
+</html>

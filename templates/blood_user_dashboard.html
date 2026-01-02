@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Request Dashboard</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #16a34a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 40px 20px;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        /* Flash Messages */
+        .alert-success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0c4a6e;
+            margin-bottom: 30px;
+            letter-spacing: -0.04em;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input, select {
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            background: #f8fafc;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Donor List */
+        .donor-card {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+        }
+
+        .donor-name { font-weight: 700; color: #166534; display: block; margin-bottom: 4px; }
+        .donor-contact { font-size: 0.85rem; color: #15803d; text-decoration: none; display: block; }
+
+        .compatibility-info {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 850px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="alert-success">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <h2>Blood User Dashboard</h2>
+
+        <div class="main-layout">
+            
+            <main class="card">
+                <h3><span>💉</span> Create Blood Request</h3>
+                
+                <form method="post">
+                    <div class="field-group">
+                        <label>Required Blood Group</label>
+                        <input name="blood_group" placeholder="e.g. O+, AB-" required>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Hospital / Delivery Location</label>
+                        <input name="hospital" placeholder="City Medical Center" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="field-group">
+                            <label>Amount (Units)</label>
+                            <input name="amount" placeholder="e.g. 2" required>
+                        </div>
+                        <div class="field-group">
+                            <label>Required Date</label>
+                            <input type="date" name="req_date" required>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Urgency Level</label>
+                        <select name="urgency">
+                            <option>Low</option>
+                            <option>Medium</option>
+                            <option>High</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Broadcast Request</button>
+                </form>
+
+                <div class="compatibility-info">
+                    <strong>Note:</strong> Please verify the blood group compatibility before requesting. 
+                    Universal donors (O-) can provide to any group, while universal recipients (AB+) can receive from any group.
+                    
+
+[Image of blood group compatibility chart]
+
+                </div>
+            </main>
+
+            <aside class="card">
+                <h3><span>🤝</span> Accepted Donors</h3>
+                
+                {% if donors %}
+                    {% for d in donors %}
+                        <div class="donor-card">
+                            <span class="donor-name">👤 {{ d[0] }}</span>
+                            <a href="tel:{{ d[1] }}" class="donor-contact">📞 {{ d[1] }}</a>
+                            <a href="mailto:{{ d[2] }}" class="donor-contact">✉️ {{ d[2] }}</a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 40px 20px; border: 2px dashed var(--border); border-radius: 16px;">
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">No donors have accepted your request yet. Updates will appear here.</p>
+                    </div>
+                {% endif %}
+            </aside>
+
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marrow User Dashboard</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e1b4b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --hla-well: #f5f3ff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 40px 20px;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        /* Success Alerts */
+        .alert-success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #312e81;
+            margin-bottom: 30px;
+            letter-spacing: -0.04em;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* HLA Form Styling */
+        .hla-well {
+            background: var(--hla-well);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #ddd6fe;
+            margin-bottom: 25px;
+        }
+
+        .hla-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Match Cards */
+        .donor-card {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+        }
+
+        .donor-name { font-weight: 700; color: #0369a1; display: block; margin-bottom: 4px; }
+        .donor-info { font-size: 0.85rem; color: #0e7490; text-decoration: none; display: block; }
+
+        @media (max-width: 850px) {
+            .layout-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="alert-success">✅ {{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <h2>Bone Marrow Dashboard</h2>
+
+        <div class="layout-grid">
+            
+            <main class="card">
+                <h3>🧬 Submit Marrow Search</h3>
+                
+                <form method="post">
+                    <div class="hla-well">
+                        <label style="color: #5b21b6; margin-bottom: 12px; display: block;">Genetic Markers (HLA Values)</label>
+                        <div class="hla-grid">
+                            <div class="field-group">
+                                <label>HLA 1</label>
+                                <input name="hla1" placeholder="A*" required>
+                            </div>
+                            <div class="field-group">
+                                <label>HLA 2</label>
+                                <input name="hla2" placeholder="B*" required>
+                            </div>
+                            <div class="field-group">
+                                <label>HLA 3</label>
+                                <input name="hla3" placeholder="C*" required>
+                            </div>
+                            <div class="field-group">
+                                <label>HLA 4</label>
+                                <input name="hla4" placeholder="DRB1*" required>
+                            </div>
+                            <div class="field-group">
+                                <label>HLA 5</label>
+                                <input name="hla5" placeholder="DQB1*" required>
+                            </div>
+                            <div class="field-group">
+                                <label>HLA 6</label>
+                                <input name="hla6" placeholder="DPB1*" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Hospital / Medical Center</label>
+                        <input name="hospital" placeholder="Name and city" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="field-group">
+                            <label>Amount Required</label>
+                            <input name="amount" placeholder="e.g. 1 unit" required>
+                        </div>
+                        <div class="field-group">
+                            <label>Required Date</label>
+                            <input type="date" name="req_date" required>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Urgency Level</label>
+                        <select name="urgency">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Submit Registry Search</button>
+                </form>
+            </main>
+
+            <aside class="card">
+                <h3>🤝 Accepted Donors</h3>
+                
+                {% if donors %}
+                    {% for d in donors %}
+                        <div class="donor-card">
+                            <span class="donor-name">👤 {{ d[0] }}</span>
+                            <a href="tel:{{ d[1] }}" class="donor-info">📞 {{ d[1] }}</a>
+                            <a href="mailto:{{ d[2] }}" class="donor-info">✉️ {{ d[2] }}</a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 40px 20px; border: 2px dashed var(--border); border-radius: 20px;">
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">No donors have matched yet. We will alert you here.</p>
+                    </div>
+                {% endif %}
+            </aside>
+
+        </div>
+    </div>
+
+</body>
+</html>

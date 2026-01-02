@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood & Bone Marrow Portal</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --blood: #dc2626;
+            --marrow: #4f46e5;
+            --user: #0284c7;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(#e2e8f0 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text);
+            padding: 20px;
+        }
+
+        .hub-container {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 800;
+            margin-bottom: 40px;
+            letter-spacing: -0.04em;
+            color: #1e293b;
+        }
+
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        /* Category Cards */
+        .category-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Link Button Styling */
+        .link-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            text-align: center;
+            border: 1.5px solid #e2e8f0;
+            color: #475569;
+        }
+
+        /* Specific Button Themes */
+        .btn-blood:hover {
+            border-color: var(--blood);
+            color: var(--blood);
+            background: #fef2f2;
+        }
+
+        .btn-marrow:hover {
+            border-color: var(--marrow);
+            color: var(--marrow);
+            background: #eef2ff;
+        }
+
+        .btn-user:hover {
+            border-color: var(--user);
+            color: var(--user);
+            background: #f0f9ff;
+        }
+
+        /* Section Specific Styles */
+        .user-section h3 { color: var(--user); }
+        .donor-section h3 { color: var(--blood); }
+        .register-section h3 { color: #475569; }
+
+        .tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            margin-bottom: 4px;
+            text-align: left;
+        }
+
+        @media (max-width: 640px) {
+            .portal-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hub-container">
+        <h1>Blood & Marrow Bank Portal</h1>
+
+        <div class="portal-grid">
+            
+            <section class="category-card user-section">
+                <h3><span>👤</span> User Login</h3>
+                <div class="link-stack">
+                    <a href="/user_login/blood" class="btn btn-user">Blood User Portal</a>
+                    <a href="/user_login/marrow" class="btn btn-user">Bone Marrow User Portal</a>
+                </div>
+            </section>
+
+            <section class="category-card donor-section">
+                <h3><span>🩸</span> Donor Login</h3>
+                <div class="link-stack">
+                    <a href="/donor_login/blood" class="btn btn-blood">Blood Donor Portal</a>
+                    <a href="/donor_login/marrow" class="btn btn-marrow">Bone Marrow Donor Portal</a>
+                </div>
+            </section>
+
+            <section class="category-card register-section">
+                <h3><span>📝</span> Registration</h3>
+                <div class="link-stack">
+                    <div class="tag">Blood Services</div>
+                    <a href="/user_register/blood" class="btn btn-user">Register as User</a>
+                    <a href="/donor_register/blood" class="btn btn-blood">Register as Donor</a>
+                    
+                    <div style="margin-top: 8px;" class="tag">Marrow Services</div>
+                    <a href="/user_register/marrow" class="nav-btn btn btn-user">Register as User</a>
+                    <a href="/donor_register/marrow" class="btn btn-marrow">Register as Donor</a>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+</body>
+</html>
