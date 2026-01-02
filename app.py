@@ -1,18 +1,26 @@
-import os
-import json
+from flask import Flask, render_template, request, redirect, session, flash, url_for
 import firebase_admin
 from firebase_admin import credentials, firestore
+import os
+import json
+from notifications import send_alert # Ensure notifications.py is in your root folder
 
-# ---------------- FIREBASE CONFIGURATION ----------------
-# Get the JSON string from the environment variable
+# 1. Initialize Flask App (Must be done before routes)
+app = Flask(__name__)
+app.secret_key = "free_project_viva_safe_key"
+
+# 2. ---------------- FIREBASE CONFIGURATION ----------------
+# Checks for the environment variable first (for Render deployment)
 firebase_json_env = os.environ.get('FIREBASE_JSON')
 
 if firebase_json_env:
-    # If running on the deployed server (Render, Railway, etc.)
-    service_account_info = json.loads(firebase_json_env)
-    cred = credentials.Certificate(service_account_info)
+    try:
+        service_account_info = json.loads(firebase_json_env)
+        cred = credentials.Certificate(service_account_info)
+    except Exception as e:
+        print(f"Error parsing FIREBASE_JSON: {e}")
 else:
-    # If running locally (it will still look for your file)
+    # Fallback for local development using the file
     cred = credentials.Certificate("serviceAccountKey.json")
 
 firebase_admin.initialize_app(cred)
@@ -34,7 +42,7 @@ def user_register(type):
             "password": request.form["password"],
             "type": type
         }
-        db.collection("users").add(data) # Firestore creates collection automatically
+        db.collection("users").add(data)
         return redirect(url_for('user_login', type=type))
     return render_template(f"{type}_user_register.html")
 
@@ -68,7 +76,7 @@ def user_login(type):
         if query:
             user = query[0]
             session.clear()
-            session["user_id"] = user.id # Uses Firestore auto-generated document ID
+            session["user_id"] = user.id 
             session["user_type"] = type
             return redirect(url_for(f'{type}_user_dashboard'))
         flash("Invalid Credentials")
@@ -100,7 +108,6 @@ def blood_user_dashboard():
         f = request.form
         blood_grp = f["blood_group"].strip().upper()
         
-        # 1. Save request
         db.collection("requests").add({
             "user_id": session["user_id"],
             "type": "blood",
@@ -112,19 +119,17 @@ def blood_user_dashboard():
             "status": "Pending"
         })
 
-        # 2. TRIGGER NECESSITY ALERTS TO MATCHING DONORS
         donors_ref = db.collection("donors").where("donor_type", "==", "blood")\
                                             .where("blood_group", "==", blood_grp)\
                                             .where("available", "==", 1).get()
         for d_doc in donors_ref:
             donor = d_doc.to_dict()
             subj = f"URGENT: {blood_grp} Blood Necessity at {f['hospital']}"
-            body = f"Hello {donor['name']},\n\nThere is an urgent necessity for {blood_grp} blood at {f['hospital']}.\n\nPlease log in to the portal to accept this request if you are available.\n\nThank you!"
+            body = f"Hello {donor['name']},\n\nThere is an urgent necessity for {blood_grp} blood at {f['hospital']}.\nPlease log in to the portal to accept this request."
             send_alert(donor['email'], subj, body)
 
-        flash(f"Request submitted. Necessity alerts sent to {len(donors_ref)} donors.")
+        flash(f"Request submitted. Alerts sent to {len(donors_ref)} donors.")
     
-    # Fetching accepted donors for the dashboard table
     responses = db.collection("donor_responses").where("response", "==", "Accepted").get()
     accepted_list = []
     for resp in responses:
@@ -150,9 +155,8 @@ def marrow_user_dashboard():
             "urgency": f["urgency"], "hospital": f["hospital"],
             "amount": f["amount"], "req_date": f["req_date"], "status": "Pending"
         })
-        flash("Registry search initiated and matching donors notified.")
+        flash("Registry search initiated.")
 
-    # Show accepted donor contacts
     responses = db.collection("donor_responses").where("response", "==", "Accepted").get()
     accepted_list = []
     for resp in responses:
@@ -216,13 +220,11 @@ def accept(rid):
     user_snap = db.collection("users").document(req["user_id"]).get()
     user = user_snap.to_dict()
 
-    # Update Firebase
     db.collection("donor_responses").add({
         "request_id": rid, "donor_id": session["donor_id"], "response": "Accepted"
     })
     db.collection("requests").document(rid).update({"status": "Accepted"})
 
-    # Send Confirmation Emails
     send_alert(user['email'], "Donor Match Found!", f"Donor {donor['name']} accepted your request. Phone: {donor['phone']}")
     send_alert(donor['email'], "Acceptance Confirmed", f"You accepted the request for {req['hospital']}.")
 
