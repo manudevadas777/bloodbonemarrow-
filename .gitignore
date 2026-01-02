@@ -1,0 +1,15 @@
+# Firebase Secret Key
+serviceAccountKey.json
+
+# Python virtual environment
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Local Database (Old SQLite)
+instance/
+*.db
+
+# Environment variables file
+.env
